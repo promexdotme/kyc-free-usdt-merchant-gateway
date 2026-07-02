@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merchant Portal | CryptoGateway SDK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f5ff',
+              100: '#e1ebff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            },
+            darkbg: '#090d16',
+            cardbg: '#111827',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: radial-gradient(circle at 50% 0%, #0d162d 0%, #090d16 80%);
+    }
+    .glass-card {
+      background: rgba(17, 24, 39, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body class="text-gray-100 font-sans min-h-screen selection:bg-brand-500 selection:text-white pb-10">
+
+  <!-- API Gateway Host Config Banner -->
+  <div class="bg-gray-950/80 border-b border-gray-800/60 px-6 py-2 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-2">
+    <div class="flex items-center gap-2">
+      <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+      <span class="font-semibold uppercase tracking-wider">Gateway Configuration</span>
+    </div>
+    <div class="flex items-center gap-2 w-full sm:w-auto">
+      <span class="shrink-0 text-xxs">Gateway Host URL:</span>
+      <input type="text" id="gateway-host-input" oninput="changeGatewayHost()" class="bg-gray-900 border border-gray-800 rounded px-2.5 py-0.5 text-xs text-gray-300 w-full sm:w-64 focus:outline-none focus:border-brand-500 font-mono" value="https://xto.377.live">
+    </div>
+  </div>
+
+  <!-- Global Alert Banner -->
+  <div class="max-w-7xl mx-auto px-6 mt-4">
+    <div id="alert-banner" class="hidden p-4 rounded-xl text-sm border flex items-center justify-between">
+      <span id="alert-banner-text"></span>
+      <button onclick="hideAlert()" class="text-gray-400 hover:text-white">&times;</button>
+    </div>
+  </div>
+
+  <!-- Auth Gate View (Login & Sign Up) -->
+  <div id="view-auth" class="max-w-md mx-auto px-6 mt-16 space-y-6">
+    <div class="text-center space-y-2">
+      <h2 class="text-3xl font-bold font-outfit text-white">CryptoGateway</h2>
+      <p class="text-xs text-gray-500">Universal Self-Hosted escrow checkout manager.</p>
+    </div>
+
+    <!-- Login Card -->
+    <div id="auth-login-card" class="glass-card rounded-3xl p-6 shadow-xl space-y-4">
+      <div class="text-sm font-bold text-white uppercase tracking-wider border-b border-gray-800 pb-2">Merchant Login</div>
+      <form onsubmit="handleLogin(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Username</label>
+          <input type="text" id="login-username" required class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="Username">
+        </div>
+        <div>
+          <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Password</label>
+          <input type="password" id="login-password" required class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="Password">
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold transition duration-200">
+          Sign In
+        </button>
+      </form>
+      <div class="text-center text-xs text-gray-500">
+        Don't have an account? <button onclick="toggleAuthForms(true)" class="text-brand-400 hover:underline">Register remotely</button>
+      </div>
+    </div>
+
+    <!-- Register Card (Hidden by default) -->
+    <div id="auth-register-card" class="hidden glass-card rounded-3xl p-6 shadow-xl space-y-4">
+      <div class="text-sm font-bold text-white uppercase tracking-wider border-b border-gray-800 pb-2">Remote Registration</div>
+      <form onsubmit="handleRegister(event)" class="space-y-3.5">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Username</label>
+            <input type="text" id="reg-username" required class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="Username">
+          </div>
+          <div>
+            <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Password</label>
+            <input type="password" id="reg-password" required class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="Password">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Payout Target</label>
+            <select id="reg-payout-type" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-2 py-2 text-xs focus:outline-none text-gray-300">
+              <option value="TOKEN">Token (USDT/USDC)</option>
+              <option value="COIN">Native Coin</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Payout Chain</label>
+            <select id="reg-payout-network" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-2 py-2 text-xs focus:outline-none text-gray-300">
+              <option value="TRC20">TRC20</option>
+              <option value="POLYGON">Polygon</option>
+              <option value="BSC">BSC</option>
+              <option value="ERC20">ERC20</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Payout Destination Address</label>
+          <input type="text" id="reg-payout-address" required class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100 font-mono" placeholder="Payout Wallet Address">
+        </div>
+        <div>
+          <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Webhook Target URL (Optional)</label>
+          <input type="url" id="reg-webhook" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="https://api.yourstore.com/webhook">
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold transition duration-200">
+          Create Account
+        </button>
+      </form>
+      <div class="text-center text-xs text-gray-500">
+        Already have an account? <button onclick="toggleAuthForms(false)" class="text-brand-400 hover:underline">Log in</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Main View (Hidden by default) -->
+  <div id="view-dashboard" class="hidden">
+    <!-- Header -->
+    <header class="border-b border-gray-800/80 bg-gray-950/80 backdrop-blur sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-md shadow-brand-500/20">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <span class="text-xl font-bold font-outfit text-white">CryptoGateway</span>
+          <span class="text-xs bg-gray-800 text-brand-400 px-2 py-0.5 rounded font-mono border border-gray-700/60 uppercase">Remote Portal</span>
+        </div>
+        
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-2">
+            <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span id="merchant-username" class="text-sm font-medium text-gray-300">Merchant</span>
+          </div>
+          <button onclick="logout()" class="text-xs text-gray-400 hover:text-white bg-gray-900 border border-gray-800 px-3.5 py-1.8 rounded-lg transition duration-200">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="max-w-7xl mx-auto px-6 py-10 space-y-8">
+      
+      <!-- Analytics Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="glass-card rounded-2xl p-6 shadow-lg">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Available Balance</div>
+          <div id="balance-available" class="text-3xl font-bold font-outfit text-emerald-400 mt-2">$0.00</div>
+          <div class="text-[10px] text-gray-500 mt-1">Total Paid minus Settled Payouts</div>
+        </div>
+        <div class="glass-card rounded-2xl p-6 shadow-lg">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Earnings</div>
+          <div id="balance-earnings" class="text-3xl font-bold font-outfit text-white mt-2">$0.00</div>
+          <div class="text-[10px] text-gray-500 mt-1">Sum of all PAID invoices</div>
+        </div>
+        <div class="glass-card rounded-2xl p-6 shadow-lg">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Settled Payouts</div>
+          <div id="balance-settled" class="text-3xl font-bold font-outfit text-brand-400 mt-2">$0.00</div>
+          <div class="text-[10px] text-gray-500 mt-1">Withdrawn & processed by Admin</div>
+        </div>
+        <div class="glass-card rounded-2xl p-6 shadow-lg">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pending Payouts</div>
+          <div id="balance-pending" class="text-3xl font-bold font-outfit text-amber-500 mt-2">$0.00</div>
+          <div class="text-[10px] text-gray-500 mt-1">Payouts awaiting Admin signature</div>
+        </div>
+      </div>
+
+      <!-- Main actions layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left: Dynamic Link Generator -->
+        <div class="glass-card rounded-2xl p-6 lg:col-span-2 space-y-6">
+          <h3 class="text-lg font-semibold font-outfit text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            Dynamic Link Generator & API Docs
+          </h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- Form Parameters -->
+            <div class="md:col-span-5 space-y-4">
+              <div class="text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-800 pb-2">Link Settings</div>
+              
+              <div>
+                <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Merchant Identifier</label>
+                <select id="gen-merchant" onchange="updateGeneratedSnippets()" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-gray-100 font-semibold">
+                  <!-- Dynamically populated options -->
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Amount (USD)</label>
+                <input type="number" step="0.01" min="0.01" id="gen-amount" value="10.00" oninput="updateGeneratedSnippets()" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-gray-100 font-semibold">
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Website / Label</label>
+                <input type="text" id="gen-website" value="MyStore" oninput="updateGeneratedSnippets()" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-gray-100 font-medium">
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Unique Reference (Ref)</label>
+                <input type="text" id="gen-ref" value="ORDER_123" oninput="updateGeneratedSnippets()" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-gray-100 font-mono">
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Allowed Payment Methods</label>
+                <div class="grid grid-cols-1 gap-1.5 max-h-[160px] overflow-y-auto pr-1">
+                  <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer select-none">
+                    <input type="checkbox" checked value="TRC20_USDT" onchange="updateGeneratedSnippets()" class="rounded border-gray-800 text-brand-600 bg-gray-950 focus:ring-0">
+                    <span>USDT <span class="text-gray-500 font-mono text-[10px]">(TRON TRC20)</span></span>
+                  </label>
+                  <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer select-none">
+                    <input type="checkbox" checked value="POLYGON_USDT" onchange="updateGeneratedSnippets()" class="rounded border-gray-800 text-brand-600 bg-gray-950 focus:ring-0">
+                    <span>USDT <span class="text-gray-500 font-mono text-[10px]">(POLYGON)</span></span>
+                  </label>
+                  <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer select-none">
+                    <input type="checkbox" value="BSC_USDT" onchange="updateGeneratedSnippets()" class="rounded border-gray-800 text-brand-600 bg-gray-950 focus:ring-0">
+                    <span>USDT <span class="text-gray-500 font-mono text-[10px]">(BSC BEP20)</span></span>
+                  </label>
+                  <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer select-none">
+                    <input type="checkbox" value="ERC20_USDT" onchange="updateGeneratedSnippets()" class="rounded border-gray-800 text-brand-600 bg-gray-950 focus:ring-0">
+                    <span>USDT <span class="text-gray-500 font-mono text-[10px]">(ETHEREUM ERC20)</span></span>
+                  </label>
+                  <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer select-none">
+                    <input type="checkbox" value="POLYGON_USDC" onchange="updateGeneratedSnippets()" class="rounded border-gray-800 text-brand-600 bg-gray-950 focus:ring-0">
+                    <span>USDC <span class="text-gray-500 font-mono text-[10px]">(POLYGON)</span></span>
+                  </label>
+                  <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer select-none">
+                    <input type="checkbox" value="BSC_USDC" onchange="updateGeneratedSnippets()" class="rounded border-gray-800 text-brand-600 bg-gray-950 focus:ring-0">
+                    <span>USDC <span class="text-gray-500 font-mono text-[10px]">(BSC BEP20)</span></span>
+                  </label>
+                  <label class="flex items-center gap-2 text-xs text-gray-300 hover:text-white cursor-pointer select-none">
+                    <input type="checkbox" value="ERC20_USDC" onchange="updateGeneratedSnippets()" class="rounded border-gray-800 text-brand-600 bg-gray-950 focus:ring-0">
+                    <span>USDC <span class="text-gray-500 font-mono text-[10px]">(ETHEREUM ERC20)</span></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Code Snippets Box -->
+            <div class="md:col-span-7 flex flex-col justify-between space-y-4">
+              <!-- GET URL Link -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs border-b border-gray-800 pb-2">
+                  <span class="font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-brand-500"></span> GET Checkout Link
+                  </span>
+                  <div class="flex gap-2">
+                    <button onclick="copyGeneratedUrl()" class="text-[10px] text-gray-400 hover:text-white transition px-2 py-0.5 bg-gray-900 border border-gray-800 rounded">Copy URL</button>
+                    <a id="gen-test-link" href="#" target="_blank" class="text-[10px] text-brand-400 hover:text-brand-300 transition px-2 py-0.5 bg-brand-950/30 border border-brand-900/40 rounded font-semibold">Open Link</a>
+                  </div>
+                </div>
+                <div class="relative bg-gray-950 border border-gray-850 rounded-xl p-3 max-h-[90px] overflow-y-auto">
+                  <code id="gen-get-snippet" class="text-[10px] font-mono text-brand-400 break-all select-all">Loading...</code>
+                </div>
+              </div>
+
+              <!-- POST API Curl -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs border-b border-gray-800 pb-2">
+                  <span class="font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-indigo-500"></span> POST API Curl Payload
+                  </span>
+                  <button onclick="copyGeneratedCurl()" class="text-[10px] text-gray-400 hover:text-white transition px-2 py-0.5 bg-gray-900 border border-gray-800 rounded">Copy Curl</button>
+                </div>
+                <div class="relative bg-gray-950 border border-gray-850 rounded-xl p-3 max-h-[190px] overflow-y-auto">
+                  <pre id="gen-post-snippet" class="text-[9.5px] font-mono text-gray-300 leading-normal select-all">Loading...</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column widgets -->
+        <div class="flex flex-col gap-6">
+          <!-- Request Payout -->
+          <div class="glass-card rounded-2xl p-6 space-y-4">
+            <h3 class="text-sm font-semibold font-outfit text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Request Payout
+            </h3>
+            <p class="text-xs text-gray-400 font-medium">Available to withdraw: <span id="withdrawable-summary" class="text-emerald-400 font-bold">$0.00</span>. Settlement is processed manually by Admin.</p>
+            <div class="flex gap-2">
+              <input type="number" step="0.01" id="payout-amount" class="w-2/3 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="Amount USD">
+              <button onclick="requestPayout()" class="w-1/3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-medium transition">
+                Withdraw
+              </button>
+            </div>
+          </div>
+
+          <!-- Profile & Payout Settings -->
+          <div class="glass-card rounded-2xl p-6 space-y-4">
+            <h3 class="text-sm font-semibold font-outfit text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+              Profile & Payout Settings
+            </h3>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[10px] text-gray-500 uppercase tracking-wider mb-1">Merchant Identifier</label>
+                <input type="text" id="prof-identifier" class="w-full bg-gray-950 border border-gray-800 rounded-lg px-2.5 py-1.8 text-xs text-gray-300 font-semibold" placeholder="Identifier">
+              </div>
+              <div>
+                <label class="block text-[10px] text-gray-500 uppercase tracking-wider mb-1">Method / Chain</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <select id="prof-payout-type" class="bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs text-gray-300">
+                    <option value="TOKEN">Token</option>
+                    <option value="COIN">Native Coin</option>
+                  </select>
+                  <select id="prof-payout-network" class="bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs text-gray-300">
+                    <option value="TRC20">TRC20</option>
+                    <option value="POLYGON">Polygon</option>
+                    <option value="BSC">BSC</option>
+                    <option value="ERC20">ERC20</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] text-gray-500 uppercase tracking-wider mb-1">Destination Address</label>
+                <input type="text" id="prof-payout-address" class="w-full bg-gray-950 border border-gray-800 rounded-lg px-2.5 py-1.8 text-xs text-gray-300 font-mono" placeholder="Address">
+              </div>
+              <div>
+                <label class="block text-[10px] text-gray-500 uppercase tracking-wider mb-1">Webhook URL</label>
+                <input type="url" id="prof-webhook" class="w-full bg-gray-950 border border-gray-800 rounded-lg px-2.5 py-1.8 text-xs text-gray-300" placeholder="Webhook URL">
+              </div>
+              <div>
+                <label class="block text-[10px] text-gray-500 uppercase tracking-wider mb-1">API Access Token (JWT)</label>
+                <div class="flex gap-1.5">
+                  <input type="password" id="prof-token" readonly class="w-full bg-gray-950/60 border border-gray-800 rounded-lg px-2.5 py-1.5 text-[10px] text-gray-400 font-mono overflow-x-hidden truncate" value="">
+                  <button type="button" onclick="toggleTokenVisibility(event)" class="px-2 py-1 bg-gray-900 border border-gray-850 hover:text-white rounded text-[10px] shrink-0 transition">Show</button>
+                  <button type="button" onclick="copyToken()" class="px-2 py-1 bg-gray-900 border border-gray-850 hover:text-white rounded text-[10px] shrink-0 transition">Copy</button>
+                </div>
+              </div>
+              <button onclick="updateProfile()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-medium transition">
+                Save Settings
+              </button>
+            </div>
+          </div>
+
+          <!-- Merchant Profiles -->
+          <div class="glass-card rounded-2xl p-6 space-y-4">
+            <h3 class="text-sm font-semibold font-outfit text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+              Merchant Profiles
+            </h3>
+            <p class="text-xs text-gray-400">Manage multiple sites with custom identifiers & webhooks. All funds route to your main payout address.</p>
+            
+            <div id="profiles-list-container" class="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <div class="border-t border-gray-800/80 pt-3 space-y-2.5">
+              <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Create New Profile</div>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="new-profile-ident" class="bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs text-gray-300 font-semibold" placeholder="Identifier (e.g. site2)">
+                <input type="url" id="new-profile-webhook" class="bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs text-gray-300" placeholder="Webhook URL">
+              </div>
+              <button onclick="addProfile()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-medium transition">
+                Create Profile
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Invoices Ledger -->
+      <div class="glass-card rounded-2xl p-6 space-y-4">
+        <h3 class="text-lg font-semibold font-outfit text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+          Invoices History
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-gray-800 text-gray-400 font-semibold uppercase tracking-wider">
+                <th class="py-3 px-4">Date</th>
+                <th class="py-3 px-4">Website</th>
+                <th class="py-3 px-4">Reference</th>
+                <th class="py-3 px-4">USD Value</th>
+                <th class="py-3 px-4">Crypto Amount</th>
+                <th class="py-3 px-4">Target Address</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Blockchain Tx</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="payments-table-body" class="divide-y divide-gray-800/40 text-gray-300">
+              <tr>
+                <td colspan="9" class="py-6 text-center text-gray-500">Loading invoices...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Withdrawals Ledger -->
+      <div class="glass-card rounded-2xl p-6 space-y-4">
+        <h3 class="text-lg font-semibold font-outfit text-white flex items-center gap-2">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+          Payout History
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-gray-800 text-gray-400 font-semibold uppercase tracking-wider">
+                <th class="py-3 px-4">Requested Date</th>
+                <th class="py-3 px-4">Amount (USD)</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Payout Tx Hash</th>
+                <th class="py-3 px-4">Settled At</th>
+              </tr>
+            </thead>
+            <tbody id="withdrawals-table-body" class="divide-y divide-gray-800/40 text-gray-300">
+              <tr>
+                <td colspan="5" class="py-6 text-center text-gray-500">No withdrawal requests found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Load config host on startup
+    let apiHost = localStorage.getItem('gateway_host') || 'https://xto.377.live';
+    document.getElementById('gateway-host-input').value = apiHost;
+
+    function changeGatewayHost() {
+      apiHost = document.getElementById('gateway-host-input').value.trim();
+      localStorage.setItem('gateway_host', apiHost);
+      // If logged in, reload dashboard
+      if (localStorage.getItem('token')) {
+        refreshData();
+      }
+    }
+
+    // Toggle Forms
+    function toggleAuthForms(toRegister) {
+      hideAlert();
+      if (toRegister) {
+        document.getElementById('auth-login-card').classList.add('hidden');
+        document.getElementById('auth-register-card').classList.remove('hidden');
+      } else {
+        document.getElementById('auth-register-card').classList.add('hidden');
+        document.getElementById('auth-login-card').classList.remove('hidden');
+      }
+    }
+
+    // Auth handlers
+    async function handleLogin(e) {
+      e.preventDefault();
+      hideAlert();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const res = await fetch(`${apiHost}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        showBanner('Login successful!', false);
+        initDashboardView();
+      } catch (err) {
+        showBanner(err.message);
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      hideAlert();
+      
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const payout_type = document.getElementById('reg-payout-type').value;
+      const payout_network = document.getElementById('reg-payout-network').value;
+      const payout_address = document.getElementById('reg-payout-address').value.trim();
+      const webhook_url = document.getElementById('reg-webhook').value.trim();
+
+      try {
+        const res = await fetch(`${apiHost}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, payout_type, payout_network, payout_address, webhook_url })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Registration failed');
+
+        showBanner('Account registered successfully! Please sign in.', false);
+        toggleAuthForms(false);
+      } catch (err) {
+        showBanner(err.message);
+      }
+    }
+
+    // Dashboard View Initialization
+    function initDashboardView() {
+      const token = localStorage.getItem('token');
+      const localUser = JSON.parse(localStorage.getItem('user'));
+
+      if (!token || !localUser) {
+        logout();
+        return;
+      }
+
+      document.getElementById('view-auth').classList.add('hidden');
+      document.getElementById('view-dashboard').classList.remove('hidden');
+
+      document.getElementById('merchant-username').innerText = localUser.username;
+
+      // Populate Settings Inputs
+      document.getElementById('prof-identifier').value = localUser.username;
+      document.getElementById('prof-payout-type').value = localUser.payout_type;
+      document.getElementById('prof-payout-network').value = localUser.payout_network;
+      document.getElementById('prof-payout-address').value = localUser.payout_address;
+      document.getElementById('prof-webhook').value = localUser.webhook_url || '';
+      document.getElementById('prof-token').value = token;
+
+      refreshData();
+    }
+
+    // Trigger check on page start
+    if (localStorage.getItem('token')) {
+      initDashboardView();
+    }
+
+    // Polling refreshes
+    let pollRef = setInterval(() => {
+      if (localStorage.getItem('token')) refreshData();
+    }, 25000);
+
+    async function refreshData() {
+      await getDashboard();
+      await getProfiles();
+      await getPayments();
+      await getWithdrawals();
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-auth').classList.remove('hidden');
+      toggleAuthForms(false);
+    }
+
+    // API fetches
+    async function getDashboard() {
+      const token = localStorage.getItem('token');
+      const localUser = JSON.parse(localStorage.getItem('user'));
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/dashboard`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.status === 401 || res.status === 403) {
+          logout();
+          return;
+        }
+        const data = await res.json();
+
+        document.getElementById('balance-available').innerText = `$${data.available_balance.toFixed(2)}`;
+        document.getElementById('withdrawable-summary').innerText = `$${data.available_balance.toFixed(2)}`;
+        document.getElementById('balance-earnings').innerText = `$${data.total_earnings.toFixed(2)}`;
+        document.getElementById('balance-settled').innerText = `$${data.total_settled.toFixed(2)}`;
+        document.getElementById('balance-pending').innerText = `$${data.total_pending_withdrawal.toFixed(2)}`;
+
+        // Keep local user details synced
+        const freshUser = { ...localUser, ...data.payout };
+        localStorage.setItem('user', JSON.stringify(freshUser));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    let merchantProfiles = [];
+
+    async function getProfiles() {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/profiles`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        merchantProfiles = await res.json();
+        renderProfiles();
+        populateIdentifierDropdown();
+      } catch (err) {
+        console.error('Error fetching profiles:', err);
+      }
+    }
+
+    function renderProfiles() {
+      const container = document.getElementById('profiles-list-container');
+      if (merchantProfiles.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-500 text-center py-2">No custom profiles created yet.</div>`;
+        return;
+      }
+      
+      container.innerHTML = merchantProfiles.map(p => `
+        <div class="flex items-center justify-between bg-gray-950/40 border border-gray-850 p-2.5 rounded-xl text-xs gap-3">
+          <div class="overflow-hidden">
+            <div class="font-bold text-white font-mono">${p.identifier}</div>
+            <div class="text-[10px] text-gray-500 truncate max-w-[160px]" title="${p.webhook_url || 'No webhook'}">${p.webhook_url || 'No webhook'}</div>
+          </div>
+          <button onclick="deleteProfile(${p.id})" class="p-1.5 hover:bg-red-950/20 text-gray-500 hover:text-red-400 rounded-lg transition shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function populateIdentifierDropdown() {
+      const select = document.getElementById('gen-merchant');
+      const localUser = JSON.parse(localStorage.getItem('user'));
+      const defaultUsername = localUser.username;
+      
+      let options = `<option value="${defaultUsername}">Default (${defaultUsername})</option>`;
+      options += merchantProfiles.map(p => `<option value="${p.identifier}">${p.identifier}</option>`).join('');
+      
+      select.innerHTML = options;
+      updateGeneratedSnippets();
+    }
+
+    async function addProfile() {
+      hideAlert();
+      const token = localStorage.getItem('token');
+      const identifier = document.getElementById('new-profile-ident').value.trim();
+      const webhook_url = document.getElementById('new-profile-webhook').value.trim();
+
+      if (!identifier) {
+        showBanner('Profile identifier is required');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/profiles`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ identifier, webhook_url })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Failed to create profile');
+
+        document.getElementById('new-profile-ident').value = '';
+        document.getElementById('new-profile-webhook').value = '';
+        showBanner('Custom profile created successfully.', false);
+        await getProfiles();
+      } catch (err) {
+        showBanner(err.message);
+      }
+    }
+
+    async function deleteProfile(id) {
+      if (!confirm('Are you sure you want to delete this profile?')) return;
+      hideAlert();
+      const token = localStorage.getItem('token');
+
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/profiles/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Failed to delete profile');
+
+        showBanner('Profile deleted successfully.', false);
+        await getProfiles();
+      } catch (err) {
+        showBanner(err.message);
+      }
+    }
+
+    // Checkout builder
+    function updateGeneratedSnippets() {
+      const merchant = document.getElementById('gen-merchant').value;
+      const amount = parseFloat(document.getElementById('gen-amount').value || '0.00').toFixed(2);
+      const website = encodeURIComponent(document.getElementById('gen-website').value || 'MyStore');
+      const ref = encodeURIComponent(document.getElementById('gen-ref').value || '');
+      
+      const checkedBoxes = document.querySelectorAll('input[type="checkbox"][value]:checked');
+      const methodsArray = Array.from(checkedBoxes).map(cb => cb.value);
+      const methodsParam = methodsArray.length > 0 ? `&methods=${methodsArray.join(',')}` : '';
+
+      const refParam = ref ? `&ref=${ref}` : '';
+      
+      const getUrl = `${apiHost}/pay/new?merchant=${merchant}&amount=${amount}&website=${website}${refParam}${methodsParam}`;
+      
+      document.getElementById('gen-get-snippet').innerText = getUrl;
+      document.getElementById('gen-test-link').href = getUrl;
+
+      const curlPayload = {
+        amount_usd: parseFloat(amount),
+        website_name: document.getElementById('gen-website').value || 'MyStore',
+        merchant_ref: document.getElementById('gen-ref').value || null,
+        allowed_methods: methodsArray
+      };
+
+      const curlString = 
+        `curl -X POST ${apiHost}/api/merchant/payment-links \\\n` +
+        `  -H "Content-Type: application/json" \\\n` +
+        `  -H "Authorization: Bearer YOUR_MERCHANT_JWT_TOKEN" \\\n` +
+        `  -d '${JSON.stringify(curlPayload, null, 2)}'`;
+
+      document.getElementById('gen-post-snippet').innerText = curlString;
+    }
+
+    function copyGeneratedUrl() {
+      const text = document.getElementById('gen-get-snippet').innerText;
+      navigator.clipboard.writeText(text);
+      showBanner('Checkout URL copied to clipboard!', false);
+    }
+
+    function copyGeneratedCurl() {
+      const text = document.getElementById('gen-post-snippet').innerText;
+      navigator.clipboard.writeText(text);
+      showBanner('Curl POST command copied to clipboard!', false);
+    }
+
+    async function updateProfile() {
+      hideAlert();
+      const token = localStorage.getItem('token');
+      const localUser = JSON.parse(localStorage.getItem('user'));
+      const merchant_identifier = document.getElementById('prof-identifier').value.trim();
+      const payout_type = document.getElementById('prof-payout-type').value;
+      const payout_network = document.getElementById('prof-payout-network').value;
+      const payout_address = document.getElementById('prof-payout-address').value;
+      const webhook_url = document.getElementById('prof-webhook').value;
+
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/profile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ merchant_identifier, payout_type, payout_network, payout_address, webhook_url })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Failed to save settings');
+
+        // Update local session
+        localUser.username = data.user.username;
+        localUser.payout_type = data.user.payout_type;
+        localUser.payout_network = data.user.payout_network;
+        localUser.payout_address = data.user.payout_address;
+        localUser.webhook_url = data.user.webhook_url;
+        localStorage.setItem('user', JSON.stringify(localUser));
+
+        document.getElementById('merchant-username').innerText = data.user.username;
+        populateIdentifierDropdown();
+
+        showBanner('Profile and payout settings updated successfully.', false);
+        refreshData();
+      } catch (err) {
+        showBanner(err.message);
+      }
+    }
+
+    async function getPayments() {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/payments`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        const tbody = document.getElementById('payments-table-body');
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" class="py-6 text-center text-gray-500">No invoices generated yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.map(pay => {
+          const date = new Date(pay.created_at).toLocaleDateString();
+          let badge = '';
+          if (pay.status === 'PAID') {
+            badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-900/60">PAID</span>';
+          } else if (pay.status === 'PENDING') {
+            badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-950 text-gray-400 border border-gray-800">PENDING</span>';
+          } else if (pay.status === 'UNDERPAID') {
+            badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-400 border border-amber-900/60">UNDERPAID</span>';
+          } else {
+            badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-400 border border-red-900/60">EXPIRED</span>';
+          }
+
+          let explorerLink = '—';
+          if (pay.tx_hash && !pay.tx_hash.startsWith('AUTO_FOUND')) {
+            const explorer = getExplorerBaseUrl(pay.network);
+            explorerLink = `<a href="${explorer}/tx/${pay.tx_hash}" target="_blank" class="text-brand-400 underline font-mono break-all text-[11px]">${pay.tx_hash.slice(0, 10)}...</a>`;
+          }
+
+          let actions = '—';
+          if (pay.status === 'UNDERPAID') {
+            actions = `
+              <button onclick="acceptUnderpaid(${pay.id}, ${pay.amount_usd})" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[10px] font-medium transition">
+                Accept Underpaid
+              </button>
+            `;
+          }
+
+          const cryptoAmountFormatted = pay.crypto_amount ? parseFloat(pay.crypto_amount).toFixed(2) : '—';
+          const cryptoCurrencyFormatted = pay.crypto_currency || '';
+          const networkFormatted = pay.network ? `(${pay.network})` : '';
+
+          return `
+            <tr class="hover:bg-gray-900/10">
+              <td class="py-3 px-4 font-mono text-gray-400">${date}</td>
+              <td class="py-3 px-4 font-medium text-white">
+                <div>${pay.website_name}</div>
+                <div class="text-[10px] text-gray-500 font-mono">${pay.merchant_identifier || 'default'}</div>
+              </td>
+              <td class="py-3 px-4 font-mono text-xs text-gray-400">${pay.merchant_ref || '—'}</td>
+              <td class="py-3 px-4 font-bold text-gray-300">$${parseFloat(pay.amount_usd).toFixed(2)}</td>
+              <td class="py-3 px-4 font-mono text-[11px]">${cryptoAmountFormatted} ${cryptoCurrencyFormatted} <span class="text-gray-500 font-sans">${networkFormatted}</span></td>
+              <td class="py-3 px-4 font-mono text-[10px] text-gray-500">${pay.derived_address || '—'}</td>
+              <td class="py-3 px-4">${badge}</td>
+              <td class="py-3 px-4">${explorerLink}</td>
+              <td class="py-3 px-4 text-right">${actions}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function getWithdrawals() {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/withdrawals`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        const tbody = document.getElementById('withdrawals-table-body');
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500">No payouts requested yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.map(w => {
+          const date = new Date(w.requested_at).toLocaleDateString();
+          const settled = w.processed_at ? new Date(w.processed_at).toLocaleDateString() : '—';
+          let badge = '';
+          if (w.status === 'SETTLED') {
+            badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-900/60">SETTLED</span>';
+          } else if (w.status === 'PENDING') {
+            badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-500 border border-amber-900/60">PENDING</span>';
+          } else {
+            badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-400 border border-red-900/60">REJECTED</span>';
+          }
+
+          let txLink = '—';
+          if (w.payout_tx_hash) {
+            const localUser = JSON.parse(localStorage.getItem('user'));
+            const explorer = getExplorerBaseUrl(w.payout_network || localUser.payout_network);
+            txLink = `<a href="${explorer}/tx/${w.payout_tx_hash}" target="_blank" class="text-brand-400 underline font-mono text-[10px] break-all">${w.payout_tx_hash.slice(0, 10)}...</a>`;
+          }
+
+          return `
+            <tr>
+              <td class="py-3 px-4 font-mono text-gray-400">${date}</td>
+              <td class="py-3 px-4 font-bold">$${parseFloat(w.amount_usd).toFixed(2)}</td>
+              <td class="py-3 px-4">${badge}</td>
+              <td class="py-3 px-4">${txLink}</td>
+              <td class="py-3 px-4 font-mono text-gray-400">${settled}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function requestPayout() {
+      hideAlert();
+      const token = localStorage.getItem('token');
+      const amount_usd = document.getElementById('payout-amount').value;
+
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/withdrawals`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ amount_usd })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Failed to request payout');
+
+        document.getElementById('payout-amount').value = '';
+        showBanner('Payout request logged successfully.', false);
+        refreshData();
+      } catch (err) {
+        showBanner(err.message);
+      }
+    }
+
+    async function acceptUnderpaid(id, currentAmount) {
+      if (!confirm(`Are you sure you want to accept the underpaid amount of $${parseFloat(currentAmount).toFixed(2)} to close this payment?`)) {
+        return;
+      }
+      hideAlert();
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/payments/${id}/accept-underpaid`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to accept underpaid');
+        
+        showBanner('Underpaid invoice accepted and closed as PAID.', false);
+        refreshData();
+      } catch (err) {
+        showBanner(err.message);
+      }
+    }
+
+    function toggleTokenVisibility(event) {
+      const input = document.getElementById('prof-token');
+      const btn = event.target;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerText = 'Hide';
+      } else {
+        input.type = 'password';
+        btn.innerText = 'Show';
+      }
+    }
+
+    function copyToken() {
+      const text = localStorage.getItem('token');
+      navigator.clipboard.writeText(text);
+      showBanner('API Access Token copied to clipboard!', false);
+    }
+
+    function getExplorerBaseUrl(network) {
+      if (network === 'TRC20') return 'https://tronscan.org/#';
+      if (network === 'POLYGON') return 'https://polygonscan.com';
+      if (network === 'BSC') return 'https://bscscan.com';
+      return 'https://etherscan.io';
+    }
+
+    function showBanner(text, isError = true) {
+      const banner = document.getElementById('alert-banner');
+      const bannerText = document.getElementById('alert-banner-text');
+      bannerText.innerText = text;
+      banner.classList.remove('hidden');
+
+      if (isError) {
+        banner.className = 'p-4 rounded-xl text-sm border flex items-center justify-between bg-red-950/40 border-red-900/50 text-red-400';
+      } else {
+        banner.className = 'p-4 rounded-xl text-sm border flex items-center justify-between bg-emerald-950/40 border-emerald-900/50 text-emerald-400';
+      }
+    }
+
+    function hideAlert() {
+      document.getElementById('alert-banner').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
