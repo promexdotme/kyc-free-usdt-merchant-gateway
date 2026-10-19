@@ -1,0 +1,182 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "0xGate Zero-KYC Crypto Payment Gateway API",
+    "version": "1.0.0",
+    "description": "Permissionless, zero-KYC multi-chain USDT & USDC payment gateway API for e-commerce stores, high-risk merchants, and autonomous AI agents. Supports TRC20 (Tron), BSC (BEP20), Polygon, and Ethereum (ERC20) with cross-chain EVM mistake recovery and exchange fee slippage protection.",
+    "contact": {
+      "name": "0xGate Protocol",
+      "email": "admin@0xgate.org",
+      "url": "https://0xgate.org"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://0xgate.org",
+      "description": "0xGate Production Cloud Gateway"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "operationId": "registerMerchantAccount",
+        "summary": "Register an anonymous Zero-KYC merchant account in 1 API call",
+        "description": "Creates a live merchant account with zero identity verification. Requires only a username, password, and crypto payout wallet address.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password", "payout_type", "payout_network", "payout_address"],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Unique merchant identifier used in payment links (e.g. apex_store)"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Merchant password (minimum 8 characters)"
+                  },
+                  "payout_type": {
+                    "type": "string",
+                    "enum": ["TOKEN", "COIN"],
+                    "default": "TOKEN"
+                  },
+                  "payout_network": {
+                    "type": "string",
+                    "enum": ["TRC20", "BSC", "POLYGON", "ERC20"],
+                    "description": "Destination blockchain network for payouts"
+                  },
+                  "payout_address": {
+                    "type": "string",
+                    "description": "Merchant's personal wallet address (0x... for EVM or T... for Tron)"
+                  },
+                  "webhook_url": {
+                    "type": "string",
+                    "description": "Optional URL to receive instant POST webhook notifications when invoices are paid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Merchant registered successfully"
+          }
+        }
+      }
+    },
+    "/pay/new": {
+      "get": {
+        "operationId": "createCheckoutRedirectInvoice",
+        "summary": "Generate a live crypto payment invoice via URL redirect",
+        "description": "Creates a new single-use BIP44 deposit address and redirects the buyer to the hosted checkout page. Can be shared directly as a payment link.",
+        "parameters": [
+          {
+            "name": "merchant",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Merchant username or sub-profile identifier"
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "number" },
+            "description": "Invoice amount in USD (e.g. 49.99)"
+          },
+          {
+            "name": "website",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Store or service name displayed on checkout"
+          },
+          {
+            "name": "ref",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Unique order reference ID to prevent duplicate payments"
+          },
+          {
+            "name": "network",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["TRC20", "BSC", "POLYGON", "ERC20"] },
+            "description": "Optional pre-selected blockchain network"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["USDT", "USDC"] },
+            "description": "Optional pre-selected stablecoin"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects to /pay/{invoice_id}"
+          }
+        }
+      }
+    },
+    "/api/public/pay/{id}": {
+      "get": {
+        "operationId": "getInvoiceStatus",
+        "summary": "Get real-time on-chain payment status and deposit address for an invoice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "Invoice ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice details and live status (PENDING, PAID, EXPIRED, UNDERPAID)"
+          }
+        }
+      }
+    },
+    "/api/public/pay/{id}/select-method": {
+      "post": {
+        "operationId": "selectInvoicePaymentMethod",
+        "summary": "Lock a specific blockchain network and stablecoin for a pending invoice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["network", "crypto_currency"],
+                "properties": {
+                  "network": { "type": "string", "enum": ["TRC20", "BSC", "POLYGON", "ERC20"] },
+                  "crypto_currency": { "type": "string", "enum": ["USDT", "USDC"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the derived deposit address for the selected network"
+          }
+        }
+      }
+    }
+  }
+}

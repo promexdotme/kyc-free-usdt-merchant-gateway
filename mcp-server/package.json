@@ -1,0 +1,24 @@
+{
+  "name": "0xgate-mcp",
+  "version": "1.0.0",
+  "description": "Official Model Context Protocol (MCP) server for 0xGate (https://0xgate.org) — Zero-KYC multi-chain USDT & USDC crypto payment gateway for AI agents and e-commerce.",
+  "main": "index.js",
+  "bin": {
+    "0xgate-mcp": "./index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "crypto-payment-gateway",
+    "no-kyc",
+    "usdt",
+    "usdc",
+    "ai-agent-payments",
+    "0xgate"
+  ],
+  "author": "0xGate Protocol (https://0xgate.org)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+!.env.example
+donotupload/
+.context/
+*_Context.md
+.skills-backup/
+_access/
+keys.txt
+data.json
+*.pem
+*.key
+*.log

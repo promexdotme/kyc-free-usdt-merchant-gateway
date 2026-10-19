@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Merchant Portal | CryptoGateway SDK</title>
+  <title>0xGate Merchant Portal | Zero-KYC Crypto Gateway SDK</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -47,13 +47,16 @@
 
   <!-- API Gateway Host Config Banner -->
   <div class="bg-gray-950/80 border-b border-gray-800/60 px-6 py-2 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-2">
-    <div class="flex items-center gap-2">
-      <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-      <span class="font-semibold uppercase tracking-wider">Gateway Configuration</span>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+        <span class="font-semibold uppercase tracking-wider">0xGate Remote SDK</span>
+      </div>
+      <a href="https://0xgate.org/#pricing" target="_blank" class="text-emerald-400 hover:underline hidden md:inline">Want 0% Fees Forever? Get $999 Sovereign VPS Edition (Free VPS Included) →</a>
     </div>
     <div class="flex items-center gap-2 w-full sm:w-auto">
       <span class="shrink-0 text-xxs">Gateway Host URL:</span>
-      <input type="text" id="gateway-host-input" oninput="changeGatewayHost()" class="bg-gray-900 border border-gray-800 rounded px-2.5 py-0.5 text-xs text-gray-300 w-full sm:w-64 focus:outline-none focus:border-brand-500 font-mono" value="https://xto.377.live">
+      <input type="text" id="gateway-host-input" oninput="changeGatewayHost()" class="bg-gray-900 border border-gray-800 rounded px-2.5 py-0.5 text-xs text-gray-300 w-full sm:w-64 focus:outline-none focus:border-brand-500 font-mono" value="https://0xgate.org">
     </div>
   </div>
 
@@ -68,8 +71,8 @@
   <!-- Auth Gate View (Login & Sign Up) -->
   <div id="view-auth" class="max-w-md mx-auto px-6 mt-16 space-y-6">
     <div class="text-center space-y-2">
-      <h2 class="text-3xl font-bold font-outfit text-white">CryptoGateway</h2>
-      <p class="text-xs text-gray-500">Universal Self-Hosted escrow checkout manager.</p>
+      <h2 class="text-3xl font-bold font-outfit text-white">0xGate</h2>
+      <p class="text-xs text-gray-400">Zero-KYC Multi-Chain USDT &amp; USDC Payment Gateway • Engineered by <a href="https://promex.me" target="_blank" class="text-emerald-400 hover:underline">PROMEX</a></p>
     </div>
 
     <!-- Login Card -->
@@ -89,13 +92,13 @@
         </button>
       </form>
       <div class="text-center text-xs text-gray-500">
-        Don't have an account? <button onclick="toggleAuthForms(true)" class="text-brand-400 hover:underline">Register remotely</button>
+        Don't have an account? <button onclick="toggleAuthForms(true)" class="text-brand-400 hover:underline">Register remotely (10s, No KYC)</button>
       </div>
     </div>
 
     <!-- Register Card (Hidden by default) -->
     <div id="auth-register-card" class="hidden glass-card rounded-3xl p-6 shadow-xl space-y-4">
-      <div class="text-sm font-bold text-white uppercase tracking-wider border-b border-gray-800 pb-2">Remote Registration</div>
+      <div class="text-sm font-bold text-white uppercase tracking-wider border-b border-gray-800 pb-2">Instant Zero-KYC Registration</div>
       <form onsubmit="handleRegister(event)" class="space-y-3.5">
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -141,6 +144,14 @@
         Already have an account? <button onclick="toggleAuthForms(false)" class="text-brand-400 hover:underline">Log in</button>
       </div>
     </div>
+
+    <div class="text-center text-[11px] text-gray-500 space-x-3">
+      <a href="https://0xgate.org" target="_blank" class="text-emerald-400 hover:underline">0xgate.org</a>
+      <span>•</span>
+      <a href="mailto:cs@0xgate.org" class="hover:text-white">cs@0xgate.org</a>
+      <span>•</span>
+      <a href="https://discord.gg/FEKpzP6TFy" target="_blank" class="text-indigo-400 hover:underline">Join Discord</a>
+    </div>
   </div>
 
   <!-- Dashboard Main View (Hidden by default) -->
@@ -149,16 +160,22 @@
     <header class="border-b border-gray-800/80 bg-gray-950/80 backdrop-blur sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="h-9 w-9 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-md shadow-brand-500/20">
+          <div class="h-9 w-9 rounded-lg bg-gradient-to-tr from-brand-600 to-emerald-500 flex items-center justify-center shadow-md shadow-brand-500/20">
             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
           </div>
-          <span class="text-xl font-bold font-outfit text-white">CryptoGateway</span>
+          <span class="text-xl font-bold font-outfit text-white">0xGate</span>
           <span class="text-xs bg-gray-800 text-brand-400 px-2 py-0.5 rounded font-mono border border-gray-700/60 uppercase">Remote Portal</span>
         </div>
         
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-4">
+          <a href="https://discord.gg/FEKpzP6TFy" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 bg-indigo-950/40 border border-indigo-800/50 px-3 py-1.5 rounded-lg transition">
+            💬 Discord Support
+          </a>
+          <a href="mailto:cs@0xgate.org" class="hidden md:inline-flex items-center gap-1 text-xs text-gray-400 hover:text-white transition">
+            cs@0xgate.org
+          </a>
           <div class="flex items-center gap-2">
             <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
             <span id="merchant-username" class="text-sm font-medium text-gray-300">Merchant</span>
@@ -176,24 +193,24 @@
       <!-- Analytics Summary Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="glass-card rounded-2xl p-6 shadow-lg">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Available Balance</div>
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Available Balance (Net)</div>
           <div id="balance-available" class="text-3xl font-bold font-outfit text-emerald-400 mt-2">$0.00</div>
-          <div class="text-[10px] text-gray-500 mt-1">Total Paid minus Settled Payouts</div>
+          <div class="text-[10px] text-gray-500 mt-1">Net Paid (after 2.99% fee) minus Settled Payouts</div>
         </div>
         <div class="glass-card rounded-2xl p-6 shadow-lg">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Earnings</div>
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Gross Volume</div>
           <div id="balance-earnings" class="text-3xl font-bold font-outfit text-white mt-2">$0.00</div>
-          <div class="text-[10px] text-gray-500 mt-1">Sum of all PAID invoices</div>
+          <div class="text-[10px] text-gray-500 mt-1">Sum of all PAID customer invoices</div>
         </div>
         <div class="glass-card rounded-2xl p-6 shadow-lg">
           <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Settled Payouts</div>
           <div id="balance-settled" class="text-3xl font-bold font-outfit text-brand-400 mt-2">$0.00</div>
-          <div class="text-[10px] text-gray-500 mt-1">Withdrawn & processed by Admin</div>
+          <div class="text-[10px] text-gray-500 mt-1">Withdrawn &amp; processed to your wallet</div>
         </div>
         <div class="glass-card rounded-2xl p-6 shadow-lg">
           <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pending Payouts</div>
           <div id="balance-pending" class="text-3xl font-bold font-outfit text-amber-500 mt-2">$0.00</div>
-          <div class="text-[10px] text-gray-500 mt-1">Payouts awaiting Admin signature</div>
+          <div class="text-[10px] text-gray-500 mt-1">Executed once daily after withdrawal request</div>
         </div>
       </div>
 
@@ -309,9 +326,9 @@
           <div class="glass-card rounded-2xl p-6 space-y-4">
             <h3 class="text-sm font-semibold font-outfit text-white flex items-center gap-2">
               <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              Request Payout
+              Request Payout (Daily Settlement)
             </h3>
-            <p class="text-xs text-gray-400 font-medium">Available to withdraw: <span id="withdrawable-summary" class="text-emerald-400 font-bold">$0.00</span>. Settlement is processed manually by Admin.</p>
+            <p class="text-xs text-gray-400 font-medium">Available to withdraw: <span id="withdrawable-summary" class="text-emerald-400 font-bold">$0.00</span> (net of 2.99% gateway fee). Payouts are executed <strong>once a day</strong> depending on when you issue a withdrawal request.</p>
             <div class="flex gap-2">
               <input type="number" step="0.01" id="payout-amount" class="w-2/3 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="Amount USD">
               <button onclick="requestPayout()" class="w-1/3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-medium transition">
@@ -454,9 +471,95 @@
     </main>
   </div>
 
+  <!-- Webhook Modal (Resend & Inspect) -->
+  <div id="webhook-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-lg glass-card rounded-2xl p-6 shadow-2xl border border-gray-700/80 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="h-8 w-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          </div>
+          <div>
+            <h4 class="text-base font-bold font-outfit text-white">Webhook Dispatch & Inspection</h4>
+            <p class="text-xs text-gray-400">Order <span id="wh-modal-order-id" class="font-mono text-white font-bold">#</span> &bull; <span id="wh-modal-website" class="text-gray-300"></span></p>
+          </div>
+        </div>
+        <button onclick="closeWebhookModal()" class="text-gray-400 hover:text-white text-xl p-1 leading-none">&times;</button>
+      </div>
+
+      <!-- Quick order specs -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-gray-950/60 border border-gray-850 p-3 rounded-xl text-xs">
+        <div>
+          <div class="text-[10px] text-gray-500 uppercase tracking-wider">Status</div>
+          <div id="wh-modal-status" class="font-bold text-emerald-400 font-mono mt-0.5">PAID</div>
+        </div>
+        <div>
+          <div class="text-[10px] text-gray-500 uppercase tracking-wider">USD Amount</div>
+          <div id="wh-modal-amount" class="font-bold text-white font-mono mt-0.5">$0.00</div>
+        </div>
+        <div>
+          <div class="text-[10px] text-gray-500 uppercase tracking-wider">Store Ref</div>
+          <div id="wh-modal-ref" class="font-mono text-gray-300 truncate mt-0.5">—</div>
+        </div>
+        <div>
+          <div class="text-[10px] text-gray-500 uppercase tracking-wider">Network</div>
+          <div id="wh-modal-network" class="font-mono text-gray-300 mt-0.5">—</div>
+        </div>
+      </div>
+
+      <!-- Webhook URL input -->
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center justify-between">
+          <span>Target Webhook URL</span>
+          <span class="text-[10px] text-gray-500 font-normal lowercase">editable for testing / overrides</span>
+        </label>
+        <div class="relative">
+          <input type="url" id="wh-modal-url" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3.5 py-2.5 text-xs text-gray-200 font-mono focus:outline-none focus:border-brand-500 pr-10" placeholder="https://yourstore.com/wc-api/kyc_free_crypto/">
+          <button type="button" onclick="resetWebhookUrlToDefault()" title="Reset to configured default" class="absolute right-2 top-2.5 text-[10px] text-gray-500 hover:text-gray-300 px-1.5 py-0.5 bg-gray-900 border border-gray-850 rounded">
+            ↺ Default
+          </button>
+        </div>
+        <p class="text-[10px] text-gray-500">
+          Called by the gateway to notify your store of payment confirmation. If previously missing, dispatching will also save this as your default webhook URL.
+        </p>
+      </div>
+
+      <!-- Action Button -->
+      <div>
+        <button id="wh-modal-fire-btn" onclick="fireWebhookNow()" class="w-full py-2.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-brand-500/20 flex items-center justify-center gap-2 transition disabled:opacity-50">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          <span id="wh-modal-fire-text">Fire Webhook Now</span>
+        </button>
+      </div>
+
+      <!-- Dispatch Result Box -->
+      <div id="wh-modal-result-box" class="hidden space-y-2 border-t border-gray-800/80 pt-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Dispatch Result</span>
+          <span id="wh-modal-result-badge" class="px-2 py-0.5 rounded text-[10px] font-bold"></span>
+        </div>
+        <div id="wh-modal-result-msg" class="text-xs p-2.5 rounded-xl break-all"></div>
+        
+        <div>
+          <div class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Server Response Body</div>
+          <pre id="wh-modal-response-body" class="text-[10px] font-mono text-gray-300 bg-gray-950 border border-gray-850 p-2.5 rounded-xl max-h-32 overflow-y-auto whitespace-pre-wrap break-all"></pre>
+        </div>
+      </div>
+
+      <!-- Payload Preview -->
+      <div class="border-t border-gray-800/80 pt-3 space-y-1.5">
+        <div class="flex items-center justify-between text-xs text-gray-400">
+          <span class="font-semibold uppercase tracking-wider">Payload Preview (JSON)</span>
+          <button type="button" onclick="copyWebhookPayload()" class="text-[10px] text-brand-400 hover:text-brand-300">Copy Payload</button>
+        </div>
+        <pre id="wh-modal-payload" class="text-[10px] font-mono text-gray-400 bg-gray-950/80 border border-gray-850 p-2.5 rounded-xl max-h-36 overflow-y-auto leading-normal select-all"></pre>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Load config host on startup
-    let apiHost = localStorage.getItem('gateway_host') || 'https://xto.377.live';
+    let apiHost = localStorage.getItem('gateway_host') || 'https://0xgate.org';
     document.getElementById('gateway-host-input').value = apiHost;
 
     function changeGatewayHost() {
@@ -614,6 +717,16 @@
 
     let merchantProfiles = [];
 
+    function escapeHtml(val) {
+      if (val === null || val === undefined) return '';
+      return String(val)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     async function getProfiles() {
       const token = localStorage.getItem('token');
       try {
@@ -638,10 +751,10 @@
       container.innerHTML = merchantProfiles.map(p => `
         <div class="flex items-center justify-between bg-gray-950/40 border border-gray-850 p-2.5 rounded-xl text-xs gap-3">
           <div class="overflow-hidden">
-            <div class="font-bold text-white font-mono">${p.identifier}</div>
-            <div class="text-[10px] text-gray-500 truncate max-w-[160px]" title="${p.webhook_url || 'No webhook'}">${p.webhook_url || 'No webhook'}</div>
+            <div class="font-bold text-white font-mono">${escapeHtml(p.identifier)}</div>
+            <div class="text-[10px] text-gray-500 truncate max-w-[160px]" title="${escapeHtml(p.webhook_url || 'No webhook')}">${escapeHtml(p.webhook_url || 'No webhook')}</div>
           </div>
-          <button onclick="deleteProfile(${p.id})" class="p-1.5 hover:bg-red-950/20 text-gray-500 hover:text-red-400 rounded-lg transition shrink-0">
+          <button onclick="deleteProfile(${Number(p.id)})" class="p-1.5 hover:bg-red-950/20 text-gray-500 hover:text-red-400 rounded-lg transition shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
           </button>
         </div>
@@ -653,8 +766,8 @@
       const localUser = JSON.parse(localStorage.getItem('user'));
       const defaultUsername = localUser.username;
       
-      let options = `<option value="${defaultUsername}">Default (${defaultUsername})</option>`;
-      options += merchantProfiles.map(p => `<option value="${p.identifier}">${p.identifier}</option>`).join('');
+      let options = `<option value="${escapeHtml(defaultUsername)}">Default (${escapeHtml(defaultUsername)})</option>`;
+      options += merchantProfiles.map(p => `<option value="${escapeHtml(p.identifier)}">${escapeHtml(p.identifier)}</option>`).join('');
       
       select.innerHTML = options;
       updateGeneratedSnippets();
@@ -801,6 +914,9 @@
       }
     }
 
+    let currentPaymentsCache = [];
+    let currentWebhookPayment = null;
+
     async function getPayments() {
       const token = localStorage.getItem('token');
       try {
@@ -808,14 +924,15 @@
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
+        currentPaymentsCache = Array.isArray(data) ? data : [];
 
         const tbody = document.getElementById('payments-table-body');
-        if (data.length === 0) {
+        if (currentPaymentsCache.length === 0) {
           tbody.innerHTML = `<tr><td colspan="9" class="py-6 text-center text-gray-500">No invoices generated yet.</td></tr>`;
           return;
         }
 
-        tbody.innerHTML = data.map(pay => {
+        tbody.innerHTML = currentPaymentsCache.map(pay => {
           const date = new Date(pay.created_at).toLocaleDateString();
           let badge = '';
           if (pay.status === 'PAID') {
@@ -828,36 +945,80 @@
             badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-400 border border-red-900/60">EXPIRED</span>';
           }
 
-          let explorerLink = '—';
-          if (pay.tx_hash && !pay.tx_hash.startsWith('AUTO_FOUND')) {
-            const explorer = getExplorerBaseUrl(pay.network);
-            explorerLink = `<a href="${explorer}/tx/${pay.tx_hash}" target="_blank" class="text-brand-400 underline font-mono break-all text-[11px]">${pay.tx_hash.slice(0, 10)}...</a>`;
+          let explorerLink = '<span class="text-gray-600">—</span>';
+          if (pay.tx_hash) {
+            if (pay.tx_hash.startsWith('AUTO_FOUND')) {
+              explorerLink = `
+                <a href="${escapeHtml(getAddressExplorerUrl(pay.network, pay.derived_address))}" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-1 text-[11px] font-mono text-amber-400 hover:text-amber-300 underline" 
+                   title="On-chain balance auto-detected (${escapeHtml(pay.tx_hash)}). Click to view address on explorer.">
+                  <span>Auto-Detected</span>
+                  <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+              `;
+            } else {
+              explorerLink = `
+                <a href="${escapeHtml(getTxExplorerUrl(pay.network, pay.tx_hash))}" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-1 text-[11px] font-mono text-brand-400 hover:text-brand-300 underline break-all" 
+                   title="View transaction on blockchain explorer">
+                  <span>${escapeHtml(pay.tx_hash.slice(0, 8))}...${escapeHtml(pay.tx_hash.slice(-4))}</span>
+                  <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+              `;
+            }
           }
 
-          let actions = '—';
+          let addressLink = '<span class="text-gray-600">—</span>';
+          if (pay.derived_address) {
+            addressLink = `
+              <a href="${escapeHtml(getAddressExplorerUrl(pay.network, pay.derived_address))}" target="_blank" rel="noopener noreferrer" 
+                 class="inline-flex items-center gap-1 font-mono text-[10px] text-gray-400 hover:text-brand-400 hover:underline" 
+                 title="View address on explorer: ${escapeHtml(pay.derived_address)}">
+                <span>${escapeHtml(pay.derived_address.slice(0, 6))}...${escapeHtml(pay.derived_address.slice(-4))}</span>
+                <svg class="w-2.5 h-2.5 text-gray-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+              </a>
+            `;
+          }
+
+          let underpaidBtn = '';
           if (pay.status === 'UNDERPAID') {
-            actions = `
-              <button onclick="acceptUnderpaid(${pay.id}, ${pay.amount_usd})" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[10px] font-medium transition">
-                Accept Underpaid
+            const acceptVal = parseFloat(pay.paid_amount || 0) > 0 ? parseFloat(pay.paid_amount) : parseFloat(pay.amount_usd);
+            underpaidBtn = `
+              <button onclick="acceptUnderpaid(${Number(pay.id)}, ${Number(acceptVal)})" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[10px] font-medium transition shrink-0">
+                Accept Underpaid ($${acceptVal.toFixed(2)})
               </button>
             `;
           }
 
+          const webhookBtn = `
+            <button onclick="openWebhookModal(${Number(pay.id)})" class="px-2.5 py-1 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-800/60 text-indigo-300 hover:text-white rounded text-[10px] font-medium transition inline-flex items-center gap-1 shrink-0" title="Inspect & Resend Webhook for Order #${Number(pay.id)}">
+              <svg class="w-3 h-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span>Webhook</span>
+            </button>
+          `;
+
+          const actions = `
+            <div class="flex items-center justify-end gap-1.5">
+              ${underpaidBtn}
+              ${webhookBtn}
+            </div>
+          `;
+
           const cryptoAmountFormatted = pay.crypto_amount ? parseFloat(pay.crypto_amount).toFixed(2) : '—';
-          const cryptoCurrencyFormatted = pay.crypto_currency || '';
-          const networkFormatted = pay.network ? `(${pay.network})` : '';
+          const cryptoCurrencyFormatted = escapeHtml(pay.crypto_currency || '');
+          const networkFormatted = pay.network ? `(${escapeHtml(pay.network)})` : '';
 
           return `
             <tr class="hover:bg-gray-900/10">
-              <td class="py-3 px-4 font-mono text-gray-400">${date}</td>
+              <td class="py-3 px-4 font-mono text-gray-400">${escapeHtml(date)}</td>
               <td class="py-3 px-4 font-medium text-white">
-                <div>${pay.website_name}</div>
-                <div class="text-[10px] text-gray-500 font-mono">${pay.merchant_identifier || 'default'}</div>
+                <div>${escapeHtml(pay.website_name)}</div>
+                <div class="text-[10px] text-gray-500 font-mono">${escapeHtml(pay.merchant_identifier || 'default')}</div>
               </td>
-              <td class="py-3 px-4 font-mono text-xs text-gray-400">${pay.merchant_ref || '—'}</td>
+              <td class="py-3 px-4 font-mono text-xs text-gray-400">${escapeHtml(pay.merchant_ref || '—')}</td>
               <td class="py-3 px-4 font-bold text-gray-300">$${parseFloat(pay.amount_usd).toFixed(2)}</td>
               <td class="py-3 px-4 font-mono text-[11px]">${cryptoAmountFormatted} ${cryptoCurrencyFormatted} <span class="text-gray-500 font-sans">${networkFormatted}</span></td>
-              <td class="py-3 px-4 font-mono text-[10px] text-gray-500">${pay.derived_address || '—'}</td>
+              <td class="py-3 px-4">${addressLink}</td>
               <td class="py-3 px-4">${badge}</td>
               <td class="py-3 px-4">${explorerLink}</td>
               <td class="py-3 px-4 text-right">${actions}</td>
@@ -899,16 +1060,16 @@
           if (w.payout_tx_hash) {
             const localUser = JSON.parse(localStorage.getItem('user'));
             const explorer = getExplorerBaseUrl(w.payout_network || localUser.payout_network);
-            txLink = `<a href="${explorer}/tx/${w.payout_tx_hash}" target="_blank" class="text-brand-400 underline font-mono text-[10px] break-all">${w.payout_tx_hash.slice(0, 10)}...</a>`;
+            txLink = `<a href="${escapeHtml(explorer)}/tx/${escapeHtml(w.payout_tx_hash)}" target="_blank" class="text-brand-400 underline font-mono text-[10px] break-all">${escapeHtml(w.payout_tx_hash.slice(0, 10))}...</a>`;
           }
 
           return `
             <tr>
-              <td class="py-3 px-4 font-mono text-gray-400">${date}</td>
+              <td class="py-3 px-4 font-mono text-gray-400">${escapeHtml(date)}</td>
               <td class="py-3 px-4 font-bold">$${parseFloat(w.amount_usd).toFixed(2)}</td>
               <td class="py-3 px-4">${badge}</td>
               <td class="py-3 px-4">${txLink}</td>
-              <td class="py-3 px-4 font-mono text-gray-400">${settled}</td>
+              <td class="py-3 px-4 font-mono text-gray-400">${escapeHtml(settled)}</td>
             </tr>
           `;
         }).join('');
@@ -986,10 +1147,170 @@
     }
 
     function getExplorerBaseUrl(network) {
-      if (network === 'TRC20') return 'https://tronscan.org/#';
-      if (network === 'POLYGON') return 'https://polygonscan.com';
-      if (network === 'BSC') return 'https://bscscan.com';
+      if (!network) return 'https://etherscan.io';
+      const n = network.toUpperCase();
+      if (n === 'TRC20' || n === 'TRON') return 'https://tronscan.org/#';
+      if (n === 'POLYGON' || n === 'MATIC') return 'https://polygonscan.com';
+      if (n === 'BSC' || n === 'BINANCE') return 'https://bscscan.com';
       return 'https://etherscan.io';
+    }
+
+    function getTxExplorerUrl(network, txHash) {
+      if (!txHash) return '#';
+      const base = getExplorerBaseUrl(network);
+      if (network && network.toUpperCase() === 'TRC20') {
+        return `${base}/transaction/${txHash}`;
+      }
+      return `${base}/tx/${txHash}`;
+    }
+
+    function getAddressExplorerUrl(network, address) {
+      if (!address) return '#';
+      const base = getExplorerBaseUrl(network);
+      return `${base}/address/${address}`;
+    }
+
+    // --- Webhook Inspection & Resend Functions ---
+    function openWebhookModal(paymentId) {
+      const pay = currentPaymentsCache.find(p => p.id === paymentId);
+      if (!pay) return;
+      currentWebhookPayment = pay;
+
+      const localUser = JSON.parse(localStorage.getItem('user')) || {};
+
+      document.getElementById('wh-modal-order-id').innerText = '#' + pay.id;
+      document.getElementById('wh-modal-website').innerText = pay.website_name || 'Store';
+      document.getElementById('wh-modal-status').innerText = pay.status;
+      document.getElementById('wh-modal-amount').innerText = `$${parseFloat(pay.amount_usd).toFixed(2)}`;
+      document.getElementById('wh-modal-ref').innerText = pay.merchant_ref || '—';
+      document.getElementById('wh-modal-network').innerText = `${pay.crypto_currency || ''} (${pay.network || ''})`;
+
+      // Set target webhook URL
+      const targetUrl = pay.target_webhook || localUser.webhook_url || '';
+      document.getElementById('wh-modal-url').value = targetUrl;
+
+      // Construct and show payload preview
+      const payload = {
+        event: 'payment.status_updated',
+        data: {
+          id: pay.id,
+          website_name: pay.website_name,
+          merchant_identifier: pay.merchant_identifier || localUser.username,
+          amount_usd: parseFloat(pay.amount_usd),
+          crypto_amount: parseFloat(pay.crypto_amount || 0),
+          crypto_currency: pay.crypto_currency,
+          network: pay.network,
+          derived_address: pay.derived_address,
+          address_index: pay.address_index,
+          status: pay.status,
+          tx_hash: pay.tx_hash,
+          merchant_ref: pay.merchant_ref,
+          created_at: pay.created_at
+        }
+      };
+      document.getElementById('wh-modal-payload').innerText = JSON.stringify(payload, null, 2);
+
+      // Reset result card
+      document.getElementById('wh-modal-result-box').classList.add('hidden');
+      document.getElementById('wh-modal-fire-btn').disabled = false;
+      document.getElementById('wh-modal-fire-text').innerText = 'Fire Webhook Now';
+
+      document.getElementById('webhook-modal').classList.remove('hidden');
+    }
+
+    function closeWebhookModal() {
+      document.getElementById('webhook-modal').classList.add('hidden');
+      currentWebhookPayment = null;
+    }
+
+    function resetWebhookUrlToDefault() {
+      if (!currentWebhookPayment) return;
+      const localUser = JSON.parse(localStorage.getItem('user')) || {};
+      const targetUrl = currentWebhookPayment.target_webhook || localUser.webhook_url || '';
+      document.getElementById('wh-modal-url').value = targetUrl;
+    }
+
+    function copyWebhookPayload() {
+      const text = document.getElementById('wh-modal-payload').innerText;
+      navigator.clipboard.writeText(text);
+      showBanner('Webhook payload copied to clipboard!', false);
+    }
+
+    async function fireWebhookNow() {
+      if (!currentWebhookPayment) return;
+      const paymentId = currentWebhookPayment.id;
+      const customUrl = document.getElementById('wh-modal-url').value.trim();
+      const token = localStorage.getItem('token');
+      const localUser = JSON.parse(localStorage.getItem('user')) || {};
+
+      if (!customUrl) {
+        alert('Please enter a target Webhook URL');
+        return;
+      }
+
+      const fireBtn = document.getElementById('wh-modal-fire-btn');
+      const fireText = document.getElementById('wh-modal-fire-text');
+      fireBtn.disabled = true;
+      fireText.innerText = 'Dispatching Webhook...';
+
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/payments/${paymentId}/retry-webhook`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ custom_webhook_url: customUrl })
+        });
+
+        const data = await res.json();
+        const resultBox = document.getElementById('wh-modal-result-box');
+        const badge = document.getElementById('wh-modal-result-badge');
+        const msg = document.getElementById('wh-modal-result-msg');
+        const bodyPre = document.getElementById('wh-modal-response-body');
+
+        resultBox.classList.remove('hidden');
+
+        if (res.ok && data.success) {
+          badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-900/60';
+          badge.innerText = `HTTP ${data.http_status || 200} OK`;
+          msg.className = 'text-xs text-emerald-400 bg-emerald-950/30 border border-emerald-900/40 p-2.5 rounded-xl break-all';
+          msg.innerText = data.message || `Webhook delivered successfully to ${customUrl}`;
+          
+          if (!localUser.webhook_url) {
+            localUser.webhook_url = customUrl;
+            localStorage.setItem('user', JSON.stringify(localUser));
+            if (document.getElementById('prof-webhook')) {
+              document.getElementById('prof-webhook').value = customUrl;
+            }
+          }
+
+          // Refresh data so target_webhook in cache updates
+          getPayments();
+        } else {
+          badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-400 border border-red-900/60';
+          badge.innerText = data.http_status ? `HTTP ${data.http_status}` : 'DELIVERY FAILED';
+          msg.className = 'text-xs text-red-400 bg-red-950/30 border border-red-900/40 p-2.5 rounded-xl break-all';
+          msg.innerText = data.error || data.message || 'Webhook failed to reach destination server';
+        }
+
+        bodyPre.innerText = data.response_data ? (typeof data.response_data === 'object' ? JSON.stringify(data.response_data, null, 2) : data.response_data) : '(No response body returned)';
+
+      } catch (err) {
+        const resultBox = document.getElementById('wh-modal-result-box');
+        const badge = document.getElementById('wh-modal-result-badge');
+        const msg = document.getElementById('wh-modal-result-msg');
+        const bodyPre = document.getElementById('wh-modal-response-body');
+        resultBox.classList.remove('hidden');
+        badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-400 border border-red-900/60';
+        badge.innerText = 'CLIENT ERROR';
+        msg.className = 'text-xs text-red-400 bg-red-950/30 border border-red-900/40 p-2.5 rounded-xl break-all';
+        msg.innerText = err.message;
+        bodyPre.innerText = 'Error occurred calling gateway API';
+      } finally {
+        fireBtn.disabled = false;
+        fireText.innerText = 'Fire Webhook Again';
+      }
     }
 
     function showBanner(text, isError = true) {
