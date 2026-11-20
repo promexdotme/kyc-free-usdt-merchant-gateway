@@ -33,6 +33,22 @@
     }
   </script>
   <style>
+    [hidden] { display: none !important; }
+    .merchant-tabs { display:flex; flex-wrap:wrap; gap:8px; padding:10px; border-radius:18px; }
+    .merchant-tabs button { padding:12px 18px; border-radius:12px; color:#9ca3af; border:1px solid transparent; font-weight:600; }
+    .merchant-tabs button[aria-selected="true"] { background:#312e81; border-color:#6366f1; color:white; }
+    .merchant-panel { min-width:0; }
+    .merchant-panel > * + * { margin-top:24px; }
+    @media (min-width:900px) {
+      #merchant-panel-settings { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+      #merchant-panel-settings > :first-child { grid-column:1 / -1; }
+      #merchant-panel-settings > * { margin-top:0; }
+    }
+    @media (max-width:600px) {
+      #view-dashboard main > .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+      #view-dashboard main > .grid > div { padding:16px; }
+      #view-dashboard main > .grid .text-3xl { font-size:24px; }
+    }
     body {
       background: radial-gradient(circle at 50% 0%, #0d162d 0%, #090d16 80%);
     }
@@ -200,7 +216,7 @@
         <div class="glass-card rounded-2xl p-6 shadow-lg">
           <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Gross Volume</div>
           <div id="balance-earnings" class="text-3xl font-bold font-outfit text-white mt-2">$0.00</div>
-          <div class="text-[10px] text-gray-500 mt-1">Sum of all PAID customer invoices</div>
+          <div class="text-[10px] text-gray-500 mt-1">Actual receipts on PAID invoices</div>
         </div>
         <div class="glass-card rounded-2xl p-6 shadow-lg">
           <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Settled Payouts</div>
@@ -426,7 +442,7 @@
                 <th class="py-3 px-4">Website</th>
                 <th class="py-3 px-4">Reference</th>
                 <th class="py-3 px-4">USD Value</th>
-                <th class="py-3 px-4">Crypto Amount</th>
+                <th class="py-3 px-4">Received / Requested</th>
                 <th class="py-3 px-4">Target Address</th>
                 <th class="py-3 px-4">Status</th>
                 <th class="py-3 px-4">Blockchain Tx</th>
@@ -637,6 +653,84 @@
     }
 
     // Dashboard View Initialization
+
+    function setupMerchantTabs() {
+      const main = document.querySelector('#view-dashboard main');
+      const summary = main.firstElementChild;
+      const oldLayout = summary.nextElementSibling;
+      const cards = {
+        invoices: [document.getElementById('payments-table-body').closest('.glass-card')],
+        links: [document.getElementById('gen-amount').closest('.glass-card')],
+        payouts: [document.getElementById('payout-amount').closest('.glass-card'), document.getElementById('withdrawals-table-body').closest('.glass-card')],
+        settings: [document.getElementById('prof-identifier').closest('.glass-card'), document.getElementById('profiles-list-container').closest('.glass-card')]
+      };
+      const nav = document.createElement('nav');
+      nav.className = 'merchant-tabs glass-card'; nav.setAttribute('role', 'tablist'); nav.setAttribute('aria-label', 'Merchant sections');
+      summary.after(nav);
+      const labels = {invoices:'Invoices', links:'Payment Links & API', payouts:'Payouts', settings:'Settings'};
+      for (const key of Object.keys(cards)) {
+        const button = document.createElement('button'); button.type = 'button'; button.id = 'merchant-tab-' + key;
+        button.textContent = labels[key]; button.setAttribute('role','tab'); button.setAttribute('aria-controls','merchant-panel-' + key);
+        button.addEventListener('click', () => selectMerchantTab(key)); nav.append(button);
+        const panel = document.createElement('section'); panel.id = 'merchant-panel-' + key; panel.className = 'merchant-panel';
+        panel.setAttribute('role','tabpanel'); panel.setAttribute('aria-labelledby',button.id); panel.tabIndex = 0;
+        cards[key].forEach(card => panel.append(card)); main.append(panel);
+      }
+      oldLayout.remove();
+      document.getElementById('merchant-panel-settings').insertAdjacentHTML('afterbegin', `
+        <div class="glass-card rounded-2xl p-6 space-y-4">
+          <h3 class="text-lg font-semibold">Underpayment acceptance</h3>
+          <p class="text-sm text-gray-400">Automatically accept new invoices when the shortfall is within your chosen percentage. 0% requires the full amount. Existing invoices keep their original rules.</p>
+          <form onsubmit="savePaymentSettings(event)" class="flex flex-wrap items-end gap-3">
+            <div><label for="underpayment-percent" class="block text-sm mb-2">Maximum shortfall (%)</label>
+            <input id="underpayment-percent" type="number" min="0" max="99" step="0.01" required class="bg-gray-950 border border-gray-700 rounded-lg p-3 w-36" placeholder="e.g. 2"></div>
+            <button type="submit" class="bg-indigo-600 rounded-lg px-5 py-3">Save percentage</button>
+          </form>
+          <p id="underpayment-setting-status" role="status" class="text-sm text-gray-400"></p>
+          <p class="text-xs text-gray-500">Only actual receipts count toward your balance, minus fees. You can also accept any recorded partial payment from Invoices. Store plugins may apply their own order checks.</p>
+        </div>`);
+      nav.addEventListener('keydown', event => {
+        const buttons = [...nav.querySelectorAll('button')]; const index = buttons.indexOf(document.activeElement);
+        if (index < 0 || !['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+        buttons[next].click(); buttons[next].focus();
+      });
+      selectMerchantTab(localStorage.getItem('merchantTab') || 'invoices');
+    }
+    function selectMerchantTab(key) {
+      if (!['invoices','links','payouts','settings'].includes(key)) key = 'invoices';
+      document.querySelectorAll('.merchant-panel').forEach(panel => { panel.hidden = panel.id !== 'merchant-panel-' + key; });
+      document.querySelectorAll('.merchant-tabs button').forEach(button => {
+        const active = button.id === 'merchant-tab-' + key;
+        button.setAttribute('aria-selected', String(active)); button.tabIndex = active ? 0 : -1;
+      });
+      localStorage.setItem('merchantTab', key);
+    }
+    async function loadPaymentSettings() {
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/payment-settings`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+        const data = await res.json(); if (!res.ok) throw new Error(data.error);
+        document.getElementById('underpayment-percent').value = data.tolerance_percent == null ? '' : data.tolerance_percent;
+        document.getElementById('underpayment-setting-status').textContent = data.tolerance_percent == null
+          ? 'Current default: up to 1.5% short, or up to $1 short on invoices of $20 or more. Save a percentage to replace this rule for new invoices.'
+          : `New invoices allow up to ${data.tolerance_percent}% shortfall.`;
+      } catch (error) { document.getElementById('underpayment-setting-status').textContent = error.message || 'Could not load settings'; }
+    }
+    async function savePaymentSettings(event) {
+      event.preventDefault();
+      const button = event.target.querySelector('button'); button.disabled = true;
+      try {
+        const res = await fetch(`${apiHost}/api/merchant/payment-settings`, {
+          method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${localStorage.getItem('token')}`},
+          body:JSON.stringify({tolerance_percent:Number(document.getElementById('underpayment-percent').value)})
+        });
+        const data = await res.json(); if (!res.ok) throw new Error(data.error);
+        document.getElementById('underpayment-setting-status').textContent = data.message;
+      } catch (error) { document.getElementById('underpayment-setting-status').textContent = error.message; }
+      finally { button.disabled = false; }
+    }
+
     function initDashboardView() {
       const token = localStorage.getItem('token');
       const localUser = JSON.parse(localStorage.getItem('user'));
@@ -659,8 +753,11 @@
       document.getElementById('prof-webhook').value = localUser.webhook_url || '';
       document.getElementById('prof-token').value = token;
 
+      loadPaymentSettings();
       refreshData();
     }
+
+    setupMerchantTabs();
 
     // Trigger check on page start
     if (localStorage.getItem('token')) {
@@ -937,6 +1034,8 @@
           let badge = '';
           if (pay.status === 'PAID') {
             badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-900/60">PAID</span>';
+          } else if (pay.status === 'PENDING' && Number(pay.paid_amount) > 0) {
+            badge = '<span class="text-amber-400 font-bold">PARTIAL · awaiting top-up</span>';
           } else if (pay.status === 'PENDING') {
             badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gray-950 text-gray-400 border border-gray-800">PENDING</span>';
           } else if (pay.status === 'UNDERPAID') {
@@ -981,11 +1080,11 @@
           }
 
           let underpaidBtn = '';
-          if (pay.status === 'UNDERPAID') {
-            const acceptVal = parseFloat(pay.paid_amount || 0) > 0 ? parseFloat(pay.paid_amount) : parseFloat(pay.amount_usd);
+          if (['PENDING', 'UNDERPAID'].includes(pay.status) && Number(pay.paid_amount) > 0 && Number(pay.paid_amount) < Number(pay.crypto_amount)) {
+            const acceptVal = Number(pay.paid_amount);
             underpaidBtn = `
               <button onclick="acceptUnderpaid(${Number(pay.id)}, ${Number(acceptVal)})" class="px-2 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[10px] font-medium transition shrink-0">
-                Accept Underpaid ($${acceptVal.toFixed(2)})
+                Accept ${acceptVal.toFixed(6).replace(/0+$/, "").replace(/\.$/, "")} received
               </button>
             `;
           }
@@ -1017,7 +1116,7 @@
               </td>
               <td class="py-3 px-4 font-mono text-xs text-gray-400">${escapeHtml(pay.merchant_ref || '—')}</td>
               <td class="py-3 px-4 font-bold text-gray-300">$${parseFloat(pay.amount_usd).toFixed(2)}</td>
-              <td class="py-3 px-4 font-mono text-[11px]">${cryptoAmountFormatted} ${cryptoCurrencyFormatted} <span class="text-gray-500 font-sans">${networkFormatted}</span></td>
+              <td class="py-3 px-4 font-mono text-[11px]">${Number(pay.paid_amount || 0).toFixed(6).replace(/0+$/, "").replace(/\.$/, "")} / ${cryptoAmountFormatted} ${cryptoCurrencyFormatted} <span class="text-gray-500 font-sans">${networkFormatted}</span></td>
               <td class="py-3 px-4">${addressLink}</td>
               <td class="py-3 px-4">${badge}</td>
               <td class="py-3 px-4">${explorerLink}</td>
@@ -1105,7 +1204,7 @@
     }
 
     async function acceptUnderpaid(id, currentAmount) {
-      if (!confirm(`Are you sure you want to accept the underpaid amount of $${parseFloat(currentAmount).toFixed(2)} to close this payment?`)) {
+      if (!confirm(`Are you sure you want to accept the underpaid amount of $${parseFloat(currentAmount).toFixed(2)} to close this payment? Only the received amount will be credited, minus fees. Your store may still require manual order approval.`)) {
         return;
       }
       hideAlert();
@@ -1116,7 +1215,8 @@
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-          }
+          },
+          body: JSON.stringify({ received_amount: Number(currentAmount) })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to accept underpaid');
