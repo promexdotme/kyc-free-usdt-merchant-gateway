@@ -103,6 +103,21 @@
           <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Password</label>
           <input type="password" id="login-password" required class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="Password">
         </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xxs text-gray-500 uppercase tracking-wider">Human Verification</label>
+            <button type="button" onclick="loadPortalCaptcha('login')" class="text-[11px] text-brand-400 hover:text-brand-300">↻ New</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <div id="login-captcha-svg" class="bg-gray-950 border border-gray-800 rounded-xl p-0.5 flex items-center justify-center min-w-[120px] h-[38px] overflow-hidden">
+              <span class="text-xxs text-gray-500">Loading...</span>
+            </div>
+            <input type="text" id="login-captcha-answer" required autocomplete="off" maxlength="4" inputmode="numeric"
+              class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs font-mono text-center focus:outline-none text-gray-100"
+              placeholder="4 digits">
+          </div>
+          <input type="hidden" id="login-captcha-id">
+        </div>
         <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold transition duration-200">
           Sign In
         </button>
@@ -151,6 +166,21 @@
         <div>
           <label class="block text-xxs text-gray-500 uppercase tracking-wider mb-1">Webhook Target URL (Optional)</label>
           <input type="url" id="reg-webhook" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs focus:outline-none text-gray-100" placeholder="https://api.yourstore.com/webhook">
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xxs text-gray-500 uppercase tracking-wider">Human Verification</label>
+            <button type="button" onclick="loadPortalCaptcha('reg')" class="text-[11px] text-brand-400 hover:text-brand-300">↻ New</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <div id="reg-captcha-svg" class="bg-gray-950 border border-gray-800 rounded-xl p-0.5 flex items-center justify-center min-w-[120px] h-[38px] overflow-hidden">
+              <span class="text-xxs text-gray-500">Loading...</span>
+            </div>
+            <input type="text" id="reg-captcha-answer" required autocomplete="off" maxlength="4" inputmode="numeric"
+              class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs font-mono text-center focus:outline-none text-gray-100"
+              placeholder="4 digits">
+          </div>
+          <input type="hidden" id="reg-captcha-id">
         </div>
         <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold transition duration-200">
           Create Account
@@ -593,27 +623,53 @@
       if (toRegister) {
         document.getElementById('auth-login-card').classList.add('hidden');
         document.getElementById('auth-register-card').classList.remove('hidden');
+        loadPortalCaptcha('reg');
       } else {
         document.getElementById('auth-register-card').classList.add('hidden');
         document.getElementById('auth-login-card').classList.remove('hidden');
+        loadPortalCaptcha('login');
       }
     }
 
     // Auth handlers
+
+    // Portal Captcha Loader
+    async function loadPortalCaptcha(type) {
+      try {
+        const res = await fetch(`${apiHost}/api/auth/captcha`);
+        const data = await res.json();
+        if (data.id && data.svg) {
+          const idEl = document.getElementById(`${type}-captcha-id`);
+          const svgEl = document.getElementById(`${type}-captcha-svg`);
+          const ansEl = document.getElementById(`${type}-captcha-answer`);
+          if (idEl) idEl.value = data.id;
+          if (svgEl) svgEl.innerHTML = data.svg;
+          if (ansEl) ansEl.value = '';
+        }
+      } catch (err) {
+        console.error('Failed to load captcha:', err);
+      }
+    }
+
     async function handleLogin(e) {
       e.preventDefault();
       hideAlert();
       const username = document.getElementById('login-username').value.trim();
       const password = document.getElementById('login-password').value;
+      const captcha_id = document.getElementById('login-captcha-id').value;
+      const captcha_answer = document.getElementById('login-captcha-answer').value.trim();
 
       try {
         const res = await fetch(`${apiHost}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
+          body: JSON.stringify({ username, password, captcha_id, captcha_answer })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Login failed');
+        if (!res.ok) {
+          loadPortalCaptcha('login');
+          throw new Error(data.error || 'Login failed');
+        }
 
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
@@ -635,15 +691,20 @@
       const payout_network = document.getElementById('reg-payout-network').value;
       const payout_address = document.getElementById('reg-payout-address').value.trim();
       const webhook_url = document.getElementById('reg-webhook').value.trim();
+      const captcha_id = document.getElementById('reg-captcha-id').value;
+      const captcha_answer = document.getElementById('reg-captcha-answer').value.trim();
 
       try {
         const res = await fetch(`${apiHost}/api/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password, payout_type, payout_network, payout_address, webhook_url })
+          body: JSON.stringify({ username, password, payout_type, payout_network, payout_address, webhook_url, captcha_id, captcha_answer })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Registration failed');
+        if (!res.ok) {
+          loadPortalCaptcha('reg');
+          throw new Error(data.error || 'Registration failed');
+        }
 
         showBanner('Account registered successfully! Please sign in.', false);
         toggleAuthForms(false);
@@ -762,6 +823,8 @@
     // Trigger check on page start
     if (localStorage.getItem('token')) {
       initDashboardView();
+    } else {
+      loadPortalCaptcha('login');
     }
 
     // Polling refreshes

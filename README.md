@@ -33,6 +33,32 @@ Accept **USDT** and **USDC** across **Tron (TRC20)**, **BNB Smart Chain (BSC / B
 
 ---
 
+## Merchant portal update — November 2026
+
+The standalone portal now includes:
+
+- Invoices, Payment Links & API, Payouts, and Settings tabs.
+- Received / requested amounts and acceptance of recorded partial payments while an invoice is pending or underpaid.
+- A configurable underpayment percentage for new invoices; existing invoices retain their original rules.
+- CAPTCHA verification for merchant login and registration.
+
+For a custom gateway, update its backend before using this portal. It must support
+`GET /api/auth/captcha`, CAPTCHA fields on login/registration,
+`GET` and `POST /api/merchant/payment-settings`, and the
+`received_amount` field on `POST /api/merchant/payments/:id/accept-underpaid`.
+Apply the backend's underpayment database migration as part of that upgrade.
+
+Accepting a partial payment credits only the recorded receipt, minus applicable
+fees. WooCommerce 1.2.1 still independently checks the order amount and can leave
+an accepted short-paid invoice's order on hold.
+
+**Agent registration limitation:** the bundled MCP registration tool does not yet
+support the interactive CAPTCHA required by the current gateway. Create the
+merchant account through the portal first; do not rely on unattended MCP account
+registration. Payment-link creation and invoice-status tools are separate.
+
+---
+
 ## 1. Instant Checkout Integration (Zero SDK Required)
 
 ### Option A: 1-Line Redirect Link (`GET`)
